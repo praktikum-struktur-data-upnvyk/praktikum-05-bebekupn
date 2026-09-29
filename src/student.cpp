@@ -68,24 +68,100 @@ string display(Stack& s) {
 }
 
 // =============================================================================
-
-// SOAL 1
+// ============================================================================
+// SOAL 1: push
+// ============================================================================
 bool push(Stack& s, int nilai) {
-    return false;
+    // 1. Alokasikan node baru
+    Node* nodeBaru = new Node();
+    nodeBaru->data = nilai;
+    
+    // 2. Sambungkan node baru ke puncak tumpukan yang lama
+    nodeBaru->next = s.top;
+    
+    // 3. Perbarui puncak tumpukan ke node baru
+    s.top = nodeBaru;
+    
+    return true;
 }
 
-// SOAL 2
+// ============================================================================
+// SOAL 2: pop
+// ============================================================================
 bool pop(Stack& s, int& nilai) {
-    return false;
+    // 1. Jika tumpukan kosong (underflow), gagal dengan wajar
+    if (isEmpty(s)) {
+        return false;
+    }
+    
+    // 2. Simpan node yang akan dihapus dan nilainya
+    Node* nodeHapus = s.top;
+    nilai = nodeHapus->data;
+    
+    // 3. Geser puncak tumpukan ke node di bawahnya
+    s.top = s.top->next;
+    
+    // 4. Bebaskan memori node yang dikeluarkan
+    delete nodeHapus;
+    
+    return true;
 }
 
-// SOAL 3
+
+// ============================================================================
+// SOAL 3: clear
+// ============================================================================
 void clear(Stack& s) {
+    // Bebaskan seluruh node satu per satu hingga tumpukan kosong
+    while (!isEmpty(s)) {
+        int temp;
+        pop(s, temp); // Menggunakan pop() memastikan memori di-delete satu per satu
+    }
 }
 
-// SOAL 4
+
+// ============================================================================
+// SOAL 4: kurungSeimbang
+// ============================================================================
 bool kurungSeimbang(const string& ekspresi) {
-    return false;
+    Stack st;
+    inisialisasi(st);
+    
+    for (char c : ekspresi) {
+        // 1. Jika karakter adalah tanda buka, push nilai ASCII-nya ke stack
+        if (c == '(' || c == '[' || c == '{') {
+            push(st, static_cast<int>(c));
+        } 
+        // 2. Jika karakter adalah tanda tutup
+        else if (c == ')' || c == ']' || c == '}') {
+            int topVal;
+            // Jika stack kosong saat ada tanda tutup, berarti penutup muncul lebih dulu
+            if (!pop(st, topVal)) {
+                clear(st); // Bebaskan sisa stack sebelum return
+                return false;
+            }
+            
+            char charAtas = static_cast<char>(topVal);
+            
+            // Periksa apakah tanda tutup cocok dengan tanda buka di puncak stack
+            bool cocok = (c == ')' && charAtas == '(') ||
+                         (c == ']' && charAtas == '[') ||
+                         (c == '}' && charAtas == '{');
+                         
+            if (!cocok) {
+                clear(st); // Bebaskan sisa stack sebelum return
+                return false;
+            }
+        }
+    }
+    
+    // 3. Jika stack akhir kosong, berarti semua tanda buka sudah mendapat pasangannya
+    bool seimbang = isEmpty(st);
+    
+    // Bebaskan stack jika masih ada sisa elemen (misal: tanda buka tanpa penutup)
+    clear(st);
+    
+    return seimbang;
 }
 
 // =============================================================================
