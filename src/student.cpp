@@ -103,7 +103,6 @@ bool pop(Stack& s, int& nilai) {
     
     // 4. Bebaskan memori node yang dikeluarkan
     delete nodeHapus;
-    
     return true;
 }
 
